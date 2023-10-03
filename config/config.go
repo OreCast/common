@@ -93,6 +93,16 @@ type Authz struct {
 	Domain       string `mapstructure:"domain"`
 }
 
+// Services represents orecast services
+type Services struct {
+	FrontendURL        string `mapstructure:"frontend_url"`
+	DiscoveryURL       string `mapstructure:"discovery_url"`
+	MetaDataURL        string `mapstructure:"metadata_url"`
+	DataManagementURL  string `mapstructure:"datamanagement_url"`
+	DataBookkeepingURL string `mapstructure:"databookkeeping_url"`
+	AuthzURL           string `mapstructure:"authz_url"`
+}
+
 // OreCastConfig represents orecast configuration
 type OreCastConfig struct {
 	Frontend
@@ -101,6 +111,7 @@ type OreCastConfig struct {
 	DataManagement
 	DataBookkeeping
 	Authz
+	Services
 }
 
 func ParseConfig(cfile string) (OreCastConfig, error) {
