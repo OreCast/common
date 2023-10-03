@@ -3,7 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
-	"strings"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/viper"
 )
@@ -104,21 +105,34 @@ type OreCastConfig struct {
 
 func ParseConfig(cfile string) (OreCastConfig, error) {
 	var config OreCastConfig
-	arr := strings.Split(cfile, ".")
-	cname := arr[0]
-	cext := arr[1]
-	viper.SetConfigName(cname)
-	viper.SetConfigType(cext)
-	viper.AddConfigPath(".")
+	if cfile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfile)
+	} else {
+		// Find home directory.
+		home, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Println("ERROR", err)
+			os.Exit(1)
+		}
+		// Search config in home directory with name ".orecast" (without extension).
+		viper.AddConfigPath(home)
+		viper.SetConfigType("yaml")
+		viper.SetConfigName(".orecast")
+		// setup cfile to $HOME/.orecast.yaml
+		cfile = filepath.Join(home, ".orecast.yaml")
+	}
+
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		msg := err.Error()
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
-			msg = fmt.Sprintf("%s file not found", cfile)
+			msg = fmt.Sprintf("fail to read %s file, error %v", cfile, err)
 		} else {
 			// Config file was found but another error was produced
-			msg = fmt.Sprintf("unable to parse %s, error", cfile, err)
+			msg = fmt.Sprintf("unable to parse %s, error %v", cfile, err)
 		}
 		return config, errors.New(msg)
 	}
