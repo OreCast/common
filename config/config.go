@@ -116,6 +116,7 @@ type OreCastConfig struct {
 	DataBookkeeping
 	Authz
 	Services
+	Encryption
 }
 
 func ParseConfig(cfile string) (OreCastConfig, error) {
