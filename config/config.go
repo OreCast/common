@@ -2,9 +2,13 @@ package config
 
 import (
 	"errors"
+	"flag"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -166,3 +170,30 @@ func main() {
 	fmt.Printf("Authz %+v\n", config.Authz)
 }
 */
+
+// Config represnets orecast configuration
+var Config *OreCastConfig
+
+func Info() string {
+	goVersion := runtime.Version()
+	tstamp := time.Now()
+	return fmt.Sprintf("git={{VERSION}} go=%s date=%s", goVersion, tstamp)
+}
+
+func Init() {
+	var version bool
+	flag.BoolVar(&version, "version", false, "Show version")
+	var config string
+	flag.StringVar(&config, "config", "", "server config file")
+	flag.Parse()
+	if version {
+		fmt.Println("server version:", Info())
+		return
+	}
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	oConfig, err := ParseConfig(config)
+	if err != nil {
+		log.Fatal("ERROR", err)
+	}
+	Config = &oConfig
+}
