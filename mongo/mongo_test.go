@@ -36,7 +36,7 @@ func TestMongoInsert(t *testing.T) {
 	rec = Record{"dataset": dataset, "test": 1}
 	records = []Record{}
 	records = append(records, rec)
-	err := Upsert(dbname, collname, records)
+	err := Upsert(dbname, collname, "dataset", records)
 	if err != nil {
 		t.Error(err)
 	}

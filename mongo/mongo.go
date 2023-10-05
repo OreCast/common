@@ -214,17 +214,16 @@ func Insert(dbname, collname string, records []Record) {
 }
 
 // Upsert records into MongoDB
-func Upsert(dbname, collname string, records []Record) error {
+func Upsert(dbname, collname, attr string, records []Record) error {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	for _, rec := range records {
-		dataset := rec["dataset"].(string)
-		if dataset == "" {
-			log.Printf("no dataset, record %v\n", rec)
+		value := rec[attr].(string)
+		if value == "" {
 			continue
 		}
-		spec := bson.M{"dataset": dataset}
+		spec := bson.M{attr: value}
 		if _, err := c.Upsert(spec, &rec); err != nil {
 			log.Printf("Fail to insert record %v, error %v\n", rec, err)
 			return err
