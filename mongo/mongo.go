@@ -22,7 +22,7 @@ import (
 const (
 	_ = iota
 	ServerError
-	MongoDBError
+	DBError
 	QueryError
 	ParserError
 	ValidationError
@@ -31,7 +31,7 @@ const (
 // ServerErrorName and others provides human based definition of the error
 const (
 	ServerErrorName     = "Server error"
-	MongoDBErrorName    = "MongoDB error"
+	DBErrorName         = "MongoDB error"
 	QueryErrorName      = "Server query error"
 	ParserErrorName     = "Server parser error"
 	ValidationErrorName = "Server validation error"
@@ -173,14 +173,19 @@ func GetInt64Value(rec Record, key string) (int64, error) {
 	return 0, fmt.Errorf("Unable to cast value for key '%s'", key)
 }
 
-// MongoConnection defines connection to MongoDB
-type MongoConnection struct {
+// Connection defines connection to MongoDB
+type Connection struct {
 	Session *mgo.Session
 	URI     string
 }
 
+// InitMongoDB initializes MongoDB connection object
+func InitMongoDB(uri string) {
+	Mongo = Connection{URI: uri}
+}
+
 // Connect provides connection to MongoDB
-func (m *MongoConnection) Connect() *mgo.Session {
+func (m *Connection) Connect() *mgo.Session {
 	var err error
 	if m.Session == nil {
 		m.Session, err = mgo.Dial(m.URI)
@@ -194,10 +199,10 @@ func (m *MongoConnection) Connect() *mgo.Session {
 }
 
 // Mongo holds MongoDB connection
-var Mongo MongoConnection
+var Mongo Connection
 
-// MongoInsert records into MongoDB
-func MongoInsert(dbname, collname string, records []Record) {
+// Insert records into MongoDB
+func Insert(dbname, collname string, records []Record) {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
@@ -208,8 +213,8 @@ func MongoInsert(dbname, collname string, records []Record) {
 	}
 }
 
-// MongoUpsert records into MongoDB
-func MongoUpsert(dbname, collname string, records []Record) error {
+// Upsert records into MongoDB
+func Upsert(dbname, collname string, records []Record) error {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
@@ -228,8 +233,8 @@ func MongoUpsert(dbname, collname string, records []Record) error {
 	return nil
 }
 
-// MongoGet records from MongoDB
-func MongoGet(dbname, collname string, spec bson.M, idx, limit int) []Record {
+// Get records from MongoDB
+func Get(dbname, collname string, spec bson.M, idx, limit int) []Record {
 	out := []Record{}
 	s := Mongo.Connect()
 	defer s.Close()
@@ -246,8 +251,8 @@ func MongoGet(dbname, collname string, spec bson.M, idx, limit int) []Record {
 	return out
 }
 
-// MongoGetSorted records from MongoDB sorted by given key
-func MongoGetSorted(dbname, collname string, spec bson.M, skeys []string) []Record {
+// GetSorted records from MongoDB sorted by given key
+func GetSorted(dbname, collname string, spec bson.M, skeys []string) []Record {
 	out := []Record{}
 	s := Mongo.Connect()
 	defer s.Close()
@@ -259,7 +264,7 @@ func MongoGetSorted(dbname, collname string, spec bson.M, skeys []string) []Reco
 		err = c.Find(spec).All(&out)
 		if err != nil {
 			log.Printf("Unable to find records, error %v\n", err)
-			out = append(out, ErrorRecord(fmt.Sprintf("%v", err), MongoDBErrorName, MongoDBError))
+			out = append(out, ErrorRecord(fmt.Sprintf("%v", err), DBErrorName, DBError))
 		}
 	}
 	return out
@@ -274,8 +279,8 @@ func sel(q ...string) (r bson.M) {
 	return
 }
 
-// MongoUpdate inplace for given spec
-func MongoUpdate(dbname, collname string, spec, newdata bson.M) {
+// Update inplace for given spec
+func Update(dbname, collname string, spec, newdata bson.M) {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
@@ -285,8 +290,8 @@ func MongoUpdate(dbname, collname string, spec, newdata bson.M) {
 	}
 }
 
-// MongoCount gets number records from MongoDB
-func MongoCount(dbname, collname string, spec bson.M) int {
+// Count gets number records from MongoDB
+func Count(dbname, collname string, spec bson.M) int {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
@@ -297,8 +302,8 @@ func MongoCount(dbname, collname string, spec bson.M) int {
 	return nrec
 }
 
-// MongoRemove records from MongoDB
-func MongoRemove(dbname, collname string, spec bson.M) {
+// Remove records from MongoDB
+func Remove(dbname, collname string, spec bson.M) {
 	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)

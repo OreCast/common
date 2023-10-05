@@ -11,23 +11,23 @@ func TestMongoInsert(t *testing.T) {
 	// our db attributes
 	dbname := "chess"
 	collname := "test"
-	Mongo = MongoConnection{URI: "mongodb://localhost:8230"}
+	InitMongoDB("mongodb://localhost:8230")
 
 	// remove all records in test collection
-	MongoRemove(dbname, collname, bson.M{})
+	Remove(dbname, collname, bson.M{})
 
 	// insert one record
 	var records []Record
 	dataset := "/a/b/c"
 	rec := Record{"dataset": dataset}
 	records = append(records, rec)
-	MongoInsert(dbname, collname, records)
+	Insert(dbname, collname, records)
 
 	// look-up one record
 	spec := bson.M{"dataset": dataset}
 	idx := 0
 	limit := 1
-	records = MongoGet(dbname, collname, spec, idx, limit)
+	records = Get(dbname, collname, spec, idx, limit)
 	if len(records) != 1 {
 		t.Errorf("unable to find records using spec '%s', records %+v", spec, records)
 	}
@@ -36,12 +36,12 @@ func TestMongoInsert(t *testing.T) {
 	rec = Record{"dataset": dataset, "test": 1}
 	records = []Record{}
 	records = append(records, rec)
-	err := MongoUpsert(dbname, collname, records)
+	err := Upsert(dbname, collname, records)
 	if err != nil {
 		t.Error(err)
 	}
 	spec = bson.M{"test": 1}
-	records = MongoGet(dbname, collname, spec, idx, limit)
+	records = Get(dbname, collname, spec, idx, limit)
 	if len(records) != 1 {
 		t.Errorf("unable to find records using spec '%s', records %+v", spec, records)
 	}
