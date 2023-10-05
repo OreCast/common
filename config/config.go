@@ -61,17 +61,24 @@ type Encryption struct {
 	Cipher string `mapstructure:"cipher"`
 }
 
+// MongoDB represents MongoDB parameters
+type MongoDB struct {
+	DBName string `mapstructure:"dbname"` // database name
+	DBColl string `mapstructure:"dbcoll"` // database collection
+	DBUri  string `mapstructure:"dburi"`  // database URI
+}
+
 // Discovery represents discovery service configuration
 type Discovery struct {
 	WebServer
+	MongoDB
 	Encryption
-	DBUri string `mapstructure:"dburi"` // database URI
 }
 
 // MetaData represents metadata service configuration
 type MetaData struct {
 	WebServer
-	DBUri string `mapstructure:"dburi"` // database URI
+	MongoDB
 }
 
 // DataManagement represents data-management service configuration
