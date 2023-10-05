@@ -65,11 +65,13 @@ type Encryption struct {
 type Discovery struct {
 	WebServer
 	Encryption
+	DBUri string `mapstructure:"dburi"` // database URI
 }
 
 // MetaData represents metadata service configuration
 type MetaData struct {
 	WebServer
+	DBUri string `mapstructure:"dburi"` // database URI
 }
 
 // DataManagement represents data-management service configuration
@@ -91,7 +93,7 @@ type Authz struct {
 	WebServer
 	Encryption
 
-	DbUri        string `mapstructure:"dburi"` // database URI
+	DBUri        string `mapstructure:"dburi"` // database URI
 	ClientId     string `mapstructure:"client_id"`
 	ClientSecret string `mapstructure:"client_secret"`
 	Domain       string `mapstructure:"domain"`
