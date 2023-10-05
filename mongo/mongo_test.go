@@ -11,7 +11,7 @@ func TestMongoInsert(t *testing.T) {
 	// our db attributes
 	dbname := "chess"
 	collname := "test"
-	_Mongo = MongoConnection{URI: "mongodb://localhost:8230"}
+	Mongo = MongoConnection{URI: "mongodb://localhost:8230"}
 
 	// remove all records in test collection
 	MongoRemove(dbname, collname, bson.M{})

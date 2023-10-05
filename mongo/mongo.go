@@ -193,12 +193,12 @@ func (m *MongoConnection) Connect() *mgo.Session {
 	return m.Session.Clone()
 }
 
-// global object which holds MongoDB connection
-var _Mongo MongoConnection
+// Mongo holds MongoDB connection
+var Mongo MongoConnection
 
 // MongoInsert records into MongoDB
 func MongoInsert(dbname, collname string, records []Record) {
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	for _, rec := range records {
@@ -210,7 +210,7 @@ func MongoInsert(dbname, collname string, records []Record) {
 
 // MongoUpsert records into MongoDB
 func MongoUpsert(dbname, collname string, records []Record) error {
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	for _, rec := range records {
@@ -231,7 +231,7 @@ func MongoUpsert(dbname, collname string, records []Record) error {
 // MongoGet records from MongoDB
 func MongoGet(dbname, collname string, spec bson.M, idx, limit int) []Record {
 	out := []Record{}
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	var err error
@@ -249,7 +249,7 @@ func MongoGet(dbname, collname string, spec bson.M, idx, limit int) []Record {
 // MongoGetSorted records from MongoDB sorted by given key
 func MongoGetSorted(dbname, collname string, spec bson.M, skeys []string) []Record {
 	out := []Record{}
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	err := c.Find(spec).Sort(skeys...).All(&out)
@@ -276,7 +276,7 @@ func sel(q ...string) (r bson.M) {
 
 // MongoUpdate inplace for given spec
 func MongoUpdate(dbname, collname string, spec, newdata bson.M) {
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	err := c.Update(spec, newdata)
@@ -287,7 +287,7 @@ func MongoUpdate(dbname, collname string, spec, newdata bson.M) {
 
 // MongoCount gets number records from MongoDB
 func MongoCount(dbname, collname string, spec bson.M) int {
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	nrec, err := c.Find(spec).Count()
@@ -299,7 +299,7 @@ func MongoCount(dbname, collname string, spec bson.M) int {
 
 // MongoRemove records from MongoDB
 func MongoRemove(dbname, collname string, spec bson.M) {
-	s := _Mongo.Connect()
+	s := Mongo.Connect()
 	defer s.Close()
 	c := s.DB(dbname).C(collname)
 	_, err := c.RemoveAll(spec)
