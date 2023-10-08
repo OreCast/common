@@ -55,7 +55,7 @@ type Frontend struct {
 	CaptchaVerifyUrl string `mapstructure:"captchaVerifyUrl"` // re-captcha verify url
 
 	// cookies parts
-	UserCookieExpires int `mapstructure:"user_cookie_expires"` // expiration of user cookie
+	UserCookieExpires int64 `mapstructure:"user_cookie_expires"` // expiration of user cookie
 }
 
 // Encryption represents encryption configuration parameters
@@ -107,7 +107,7 @@ type Authz struct {
 	ClientId     string `mapstructure:"client_id"`
 	ClientSecret string `mapstructure:"client_secret"`
 	Domain       string `mapstructure:"domain"`
-	TokenExpires int    `mapstructure:token_expires` // expiration of token
+	TokenExpires int64  `mapstructure:token_expires` // expiration of token
 }
 
 // Services represents orecast services
