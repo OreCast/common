@@ -3,7 +3,7 @@ package mongo
 import (
 	"testing"
 
-	"gopkg.in/mgo.v2/bson"
+	bson "go.mongodb.org/mongo-driver/bson"
 )
 
 // TestMongoInsert
