@@ -4,8 +4,13 @@ package mongo
 //
 // Copyright (c) 2019 - Valentin Kuznetsov <vkuznet AT gmail dot com>
 //
-// References : https://gist.github.com/boj/5412538
-//              https://gist.github.com/border/3489566
+// References :
+// using mgo driver:
+//   https://gist.github.com/boj/5412538
+//   https://gist.github.com/border/3489566
+// using mongo driver:
+//   https://github.com/mongodb/mongo-go-driver/
+//   https://www.loginradius.com/blog/engineering/mongodb-as-datasource-in-golang/
 
 import (
 	"context"
